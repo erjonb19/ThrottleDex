@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trusted List
 
-## Getting Started
+The car people real enthusiasts send their friends to, one city at a time. A curator publishes a list of vendors by category, vouched for with their own name, re-checked every six months. Nobody pays to be listed.
 
-First, run the development server:
+Working name. The product name is still being chosen.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## What is here
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Path | What it does |
+| --- | --- |
+| `supabase/migrations/0001_init.sql` | Tables, enums, row-level security, click-count view |
+| `supabase/seed.sql` | The NYC metro and the 27 categories. No people or vendors. |
+| `src/app/page.tsx` | Landing page |
+| `src/app/[metro]/page.tsx` | All approved curators in a metro (`/nyc`) |
+| `src/app/[metro]/[handle]/page.tsx` | One curator's public list (`/nyc/erjon`), cached and tagged |
+| `src/app/go/[id]/route.ts` | Click-through redirect that records a referral, works signed out |
+| `src/app/login/` | Magic-link sign in |
+| `src/app/dashboard/` | Curator profile and one form per category slot |
+| `src/lib/data.ts` | Cached public reads with cache tags |
+| `src/proxy.ts` | Refreshes the session on `/dashboard` only |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Run it locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a free project at supabase.com.
+2. In the Supabase dashboard open **SQL Editor**, paste the contents of `supabase/migrations/0001_init.sql`, run it. Then do the same with `supabase/seed.sql`.
+3. In **Authentication > URL Configuration** add `http://localhost:3000/auth/callback` to Redirect URLs.
+4. Copy `.env.example` to `.env.local` and fill in the URL and anon key from **Project Settings > API**.
+5. `npm install`, then `npm run dev`, then open http://localhost:3000.
+6. Go to **Your list**, sign in with your email, save a profile, fill in a few slots.
+7. To make your list public, run this in the SQL Editor (replace the handle):
+   `update curators set approved_at = now() where handle = 'your-handle';`
 
-## Learn More
+## Deploy
 
-To learn more about Next.js, take a look at the following resources:
+1. Push this repo to GitHub.
+2. Import it at vercel.com, add the three environment variables from `.env.local`, deploy.
+3. In Supabase, add `https://YOUR-DOMAIN/auth/callback` to Redirect URLs and set `NEXT_PUBLIC_SITE_URL` on Vercel to `https://YOUR-DOMAIN`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Admin
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Approval is manual on purpose. To make a user an admin (can approve curators, change vendor status), set `app_metadata.role = 'admin'` on their auth user in Supabase **Authentication > Users**, or:
+`update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}' where email = 'you@example.com';`
 
-## Deploy on Vercel
+## Not built yet (see the build plan)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The six-month confirmation email and the 30-day follow-up (phase 3, Python jobs)
+- Google Business status check for closed shops (phase 3)
+- Tier filters on the public page (the data is already tagged; phase 4)
+- Vendor dashboard and any payment (phase 4)
