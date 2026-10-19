@@ -2,6 +2,7 @@
   "expo": {
     "name": "ThrottleDex",
     "slug": "throttledex",
+    "owner": "throttledex",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
