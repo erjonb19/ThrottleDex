@@ -45,6 +45,31 @@ npm run typecheck
 npx eslint .
 ```
 
-## Later: putting it in the App Store and Google Play
+## Put it on your iPhone with TestFlight
 
-That's done with EAS Build and Submit (`npx eas-cli@latest build`), and needs an Apple Developer account and a Google Play developer account. The app id is already set to `com.throttledex.app` in `app.json`.
+TestFlight is Apple's beta app. It installs the real app on your phone (no Expo Go), and you can invite testers. Needs an active Apple Developer account. Builds run on Expo's servers, so no Mac or Xcode is needed.
+
+1. Make a free account at expo.dev.
+2. In Terminal, inside `ThrottleDex/mobile`, run:
+   ```
+   npx eas-cli@latest login
+   npx eas-cli@latest init
+   ```
+   `init` links this folder to an Expo project and adds its id to `app.json`. Commit that change.
+3. Build the iPhone app:
+   ```
+   npx eas-cli@latest build --platform ios --profile production
+   ```
+   When it asks, sign in with your Apple Developer Apple ID and let it create the certificates for you. The build takes about 15 to 30 minutes.
+4. Send it to TestFlight:
+   ```
+   npx eas-cli@latest submit --platform ios --latest
+   ```
+   Let it create the app in App Store Connect if asked.
+5. Once Apple finishes processing (usually under an hour), install the **TestFlight** app on your iPhone. ThrottleDex shows up there for your Apple ID.
+
+The app id is `com.throttledex.app` (set in `app.json`).
+
+## Later: public App Store and Google Play
+
+A public App Store release also needs a privacy policy page, screenshots and Apple's review. Google Play needs a separate Google Play developer account, then `npx eas-cli@latest build --platform android` and `submit`.
