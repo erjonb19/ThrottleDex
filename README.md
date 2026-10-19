@@ -2,14 +2,22 @@
 
 The car people real enthusiasts send their friends to, one city at a time. A curator publishes a list of vendors by category, vouched for with their own name, re-checked every six months. Nobody pays to be listed.
 
-Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 2026. Trademark search still to do.
+Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 2026. USPTO search Oct 18, 2026: no marks for "throttledex".
+
+## Status (Oct 18, 2026)
+
+- Supabase project `throttledex` (us-east-1) is live with both migrations and the seed applied. Supabase's security advisor reports no issues.
+- Tested end to end: 22 browser checks (magic-link sign in, profile, saving and editing picks, approval, public page, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
+- Not yet deployed. Next step is Vercel.
 
 ## What is here
 
 | Path | What it does |
 | --- | --- |
 | `supabase/migrations/0001_init.sql` | Tables, enums, row-level security, click-count view |
+| `supabase/migrations/0002_harden_helpers.sql` | Tightens the two helper functions the security rules use |
 | `supabase/seed.sql` | The NYC metro and the 27 categories. No people or vendors. |
+| `supabase/tests/rls.sql` | 17 security checks; runs in a transaction and leaves no data. Every row should say PASS. |
 | `src/app/page.tsx` | Landing page |
 | `src/app/[metro]/page.tsx` | All approved curators in a metro (`/nyc`) |
 | `src/app/[metro]/[handle]/page.tsx` | One curator's public list (`/nyc/erjon`), cached and tagged |
@@ -22,13 +30,14 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 ## Run it locally
 
 1. Create a free project at supabase.com.
-2. In the Supabase dashboard open **SQL Editor**, paste the contents of `supabase/migrations/0001_init.sql`, run it. Then do the same with `supabase/seed.sql`.
+2. In the Supabase dashboard open **SQL Editor** and run these files in order, pasting each one in: `supabase/migrations/0001_init.sql`, `supabase/migrations/0002_harden_helpers.sql`, `supabase/seed.sql`.
 3. In **Authentication > URL Configuration** add `http://localhost:3000/auth/callback` to Redirect URLs.
 4. Copy `.env.example` to `.env.local` and fill in the URL and anon key from **Project Settings > API**.
 5. `npm install`, then `npm run dev`, then open http://localhost:3000.
 6. Go to **Your list**, sign in with your email, save a profile, fill in a few slots.
 7. To make your list public, run this in the SQL Editor (replace the handle):
    `update curators set approved_at = now() where handle = 'your-handle';`
+   The page appears within about 30 seconds, and on the `/nyc` index within a couple of minutes.
 
 ## Deploy
 

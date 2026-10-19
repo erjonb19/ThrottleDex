@@ -25,7 +25,10 @@ export async function getReference(): Promise<{ categories: Category[]; metros: 
 
 export async function getApprovedCurators(metro: string): Promise<Curator[]> {
   "use cache";
-  cacheLife("hours");
+  // Minutes, not hours: approving a curator happens in the database, outside the
+  // app, so this index has no save action to expire it. A new curator shows up
+  // within a couple of minutes of approval.
+  cacheLife("minutes");
   cacheTag(tags.curators(metro));
   const { data } = await supabasePublic
     .from("curators")
@@ -41,7 +44,6 @@ export async function getCuratorPage(
   handle: string,
 ): Promise<{ curator: Curator; listings: Listing[] } | null> {
   "use cache";
-  cacheLife("max");
   cacheTag(tags.curator(metro, handle));
   const { data: curator } = await supabasePublic
     .from("curators")
@@ -50,7 +52,14 @@ export async function getCuratorPage(
     .eq("handle", handle)
     .not("approved_at", "is", null)
     .maybeSingle();
-  if (!curator) return null;
+  if (!curator) {
+    // Hold "not found" briefly: the curator may be approved a minute from now.
+    // 30s refresh, 5 min expiry is the shortest lifetime Next.js still prerenders.
+    cacheLife({ stale: 30, revalidate: 30, expire: 300 });
+    return null;
+  }
+  // Real pages cache long; every curator save expires this tag immediately.
+  cacheLife("max");
   const { data: listings } = await supabasePublic
     .from("listings")
     .select("id, curator_id, vendor_id, note, confirmed_at, position, vendor:vendors(*)")

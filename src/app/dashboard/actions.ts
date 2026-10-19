@@ -92,14 +92,26 @@ export async function saveSlot(formData: FormData) {
   const confirmed_at = /^\d{4}-\d{2}-\d{2}$/.test(s(formData.get("confirmed_at"))) ? s(formData.get("confirmed_at")) : new Date().toISOString().slice(0, 10);
   const listing = { curator_id: curator.id, vendor_id: vendorId, note: s(formData.get("note"), 240), confirmed_at };
 
-  // Replace whatever listing this curator had in this category.
-  if (existingListingId) await supabase.from("listings").delete().eq("id", existingListingId).eq("curator_id", curator.id);
-  const { data: saved, error } = await supabase.from("listings").upsert(listing, { onConflict: "curator_id,vendor_id" }).select("id").single();
-  if (error) redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
+  // Same shop as before: update the listing in place so its click history survives.
+  // Different shop: remove the old listing (its clicks belonged to that shop) and add the new one.
+  const { data: existing } = existingListingId
+    ? await supabase.from("listings").select("id, vendor_id").eq("id", existingListingId).eq("curator_id", curator.id).maybeSingle()
+    : { data: null };
+  let savedId: string | undefined;
+  if (existing && existing.vendor_id === vendorId) {
+    const { error } = await supabase.from("listings").update({ note: listing.note, confirmed_at }).eq("id", existing.id);
+    if (error) redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
+    savedId = existing.id;
+  } else {
+    if (existing) await supabase.from("listings").delete().eq("id", existing.id).eq("curator_id", curator.id);
+    const { data: saved, error } = await supabase.from("listings").upsert(listing, { onConflict: "curator_id,vendor_id" }).select("id").single();
+    if (error) redirect(`/dashboard?error=${encodeURIComponent(error.message)}`);
+    savedId = saved?.id;
+  }
 
   expireCuratorPages(curator.metro, curator.handle);
   if (existingListingId) updateTag(tags.go(existingListingId));
-  if (saved) updateTag(tags.go(saved.id));
+  if (savedId) updateTag(tags.go(savedId));
   redirect(`/dashboard?saved=${category}#${category}`);
 }
 

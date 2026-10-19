@@ -105,8 +105,9 @@ language sql stable as $$
   select coalesce((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false)
 $$;
 
--- Click counts per listing, readable by anyone (no per-click rows exposed).
-create or replace view listing_click_counts as
+-- Click counts per listing. security_invoker makes the view obey the caller's RLS,
+-- so a curator sees counts for their own listings only.
+create or replace view listing_click_counts with (security_invoker = true) as
   select listing_id, count(*)::int as clicks, max(clicked_at) as last_click
   from referrals group by listing_id;
 
@@ -136,11 +137,11 @@ create policy "curators self update" on curators for update
     or (user_id = auth.uid() and approved_at is not distinct from (select approved_at from curators c where c.id = curators.id))
   );
 
--- Vendors: everyone reads; any approved curator may add one; only admins change status.
+-- Vendors: everyone reads; any curator (approved or still in review) may add one,
+-- since new curators fill in their list before approval; only admins change status.
 create policy "vendors read" on vendors for select using (true);
 create policy "vendors curator insert" on vendors for insert
-  with check (created_by = current_curator_id()
-              and exists (select 1 from curators where id = current_curator_id() and approved_at is not null));
+  with check (current_curator_id() is not null and created_by = current_curator_id());
 create policy "vendors creator update" on vendors for update
   using (created_by = current_curator_id() or is_admin())
   with check (is_admin() or status = (select status from vendors v where v.id = vendors.id));

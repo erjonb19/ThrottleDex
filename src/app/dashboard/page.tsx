@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { getReference } from "@/lib/data";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -17,6 +18,8 @@ export default function Dashboard({ searchParams }: PageProps<"/dashboard">) {
 }
 
 async function DashboardBody({ searchParams }: Pick<PageProps<"/dashboard">, "searchParams">) {
+  // Per-person page that reads today's date for the "last confirmed" default: always render at request time.
+  await connection();
   const [q, { categories, metros }, supabase] = await Promise.all([searchParams, getReference(), supabaseServer()]);
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return <p>Please <Link href="/login" className="text-accent">sign in</Link>.</p>;
