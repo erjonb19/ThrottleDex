@@ -1,8 +1,8 @@
-# Trusted List
+# ThrottleDex
 
 The car people real enthusiasts send their friends to, one city at a time. A curator publishes a list of vendors by category, vouched for with their own name, re-checked every six months. Nobody pays to be listed.
 
-Working name. The product name is still being chosen.
+Name chosen Oct 2026. Domain and trademark checks are the owner's next step.
 
 ## What is here
 

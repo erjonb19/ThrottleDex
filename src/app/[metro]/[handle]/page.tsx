@@ -34,7 +34,7 @@ export default async function CuratorPage({ params }: PageProps<"/[metro]/[handl
     <div className="grid gap-2">
       <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b-[6px] border-stripe pb-4">
         <div>
-          <div className="eyebrow">{m?.name ?? metro} · trusted list</div>
+          <div className="eyebrow">{m?.name ?? metro} · ThrottleDex</div>
           <h1 className="mt-1 font-display text-5xl font-bold leading-[.95] sm:text-6xl">{curator.display_name}&apos;s car people</h1>
         </div>
         <div className="grid gap-0.5 font-mono text-[12px] text-ink-2 sm:text-right">

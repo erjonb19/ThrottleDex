@@ -8,7 +8,7 @@ const body = IBM_Plex_Sans({ variable: "--font-body", subsets: ["latin"], weight
 const mono = IBM_Plex_Mono({ variable: "--font-mono", subsets: ["latin"], weight: ["400", "500"] });
 
 export const metadata: Metadata = {
-  title: { default: "Trusted List", template: "%s · Trusted List" },
+  title: { default: "ThrottleDex", template: "%s · ThrottleDex" },
   description: "The car people real enthusiasts send their friends to, one city at a time.",
 };
 
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-line">
           <div className="mx-auto flex w-full max-w-[920px] items-center justify-between gap-4 px-4 py-3">
             <Link href="/" className="font-display text-xl font-bold uppercase tracking-wide text-ink no-underline">
-              Trusted List
+              ThrottleDex
             </Link>
             <nav className="flex items-center gap-4 text-[13.5px]">
               <Link href="/nyc" className="text-ink-2 hover:text-ink">NYC</Link>
