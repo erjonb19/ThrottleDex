@@ -23,9 +23,14 @@ export default async function MetroPage({ params }: PageProps<"/[metro]">) {
         </p>
       </header>
       {curators.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-line bg-open p-5 text-ink-2">
-          No approved lists in {m.name} yet. <Link href="/login" className="text-accent">Publish the first one.</Link>
-        </p>
+        <div className="rounded-lg border border-dashed border-line bg-open p-5">
+          <div className="eyebrow">Coming soon</div>
+          <p className="mt-1 text-ink-2">
+            {m.name} doesn&apos;t have a list yet. If you&apos;re the person friends ask &quot;who do you use for that?&quot;,
+            start the first one. It goes live once we approve it.
+          </p>
+          <Link href="/login" className="btn btn-primary mt-3 inline-block">Start the first {m.name} list</Link>
+        </div>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">
           {curators.map((c) => (

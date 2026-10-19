@@ -15,7 +15,7 @@ export default function Home() {
           vouched for by a name, re-checked every six months, and nobody pays to be on it.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/nyc" className="btn btn-primary">Browse NYC lists</Link>
+          <Link href="/cities" className="btn btn-primary">Browse lists by city</Link>
           <Link href="/login" className="btn">Publish your own list</Link>
         </div>
       </section>
@@ -27,7 +27,7 @@ export default function Home() {
             <div key={t.slug} className={`rounded-lg border p-4 ${t.slug === "enthusiast" ? "border-accent bg-paper" : "border-line bg-open"}`}>
               <div className="font-display text-xl font-semibold">{t.name}</div>
               <div className="text-[13.5px] text-ink-2">{t.who}</div>
-              <div className="eyebrow mt-2">{t.slug === "enthusiast" ? "live in NYC" : "coming after launch"}</div>
+              <div className="eyebrow mt-2">{t.slug === "enthusiast" ? "live now" : "coming after launch"}</div>
             </div>
           ))}
         </div>

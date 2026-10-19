@@ -4,11 +4,11 @@ The car people real enthusiasts send their friends to, one city at a time. A cur
 
 Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 2026. USPTO search Oct 18, 2026: no marks for "throttledex".
 
-## Status (Oct 19, 2026)
+## Status (Oct 18, 2026)
 
 - Supabase project `throttledex` (us-east-1) is live with both migrations and the seed applied. Supabase's security advisor reports no issues.
-- New: admin approval page (`/admin`), tier filters on each public list, and "Add to Home Screen" install on iPhone and Android.
-- Tested end to end: 36 browser checks (magic-link sign in, profile, saving and editing picks, admin approve and remove, public page, tier filters, home-screen manifest and icons, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
+- New: admin approval page (`/admin`), tier filters on each public list, "Add to Home Screen" install on iPhone and Android, and seven cities (NYC, LA, Miami, Atlanta, Dallas–Fort Worth, Chicago, Detroit). A city shows "coming soon" until its first curator is approved.
+- Tested end to end: 41 browser checks (magic-link sign in, profile, saving and editing picks, admin approve and remove, public page, cities and coming soon, tier filters, home-screen manifest and icons, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
 - Not yet deployed. Vercel is on hold; see Deploy.
 
 ## What is here
@@ -17,10 +17,12 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 | --- | --- |
 | `supabase/migrations/0001_init.sql` | Tables, enums, row-level security, click-count view |
 | `supabase/migrations/0002_harden_helpers.sql` | Tightens the two helper functions the security rules use |
+| `supabase/migrations/0003_more_cities.sql` | Adds LA, Miami, Atlanta, Dallas–Fort Worth, Chicago, Detroit |
 | `supabase/seed.sql` | The NYC metro and the 27 categories. No people or vendors. |
 | `supabase/tests/rls.sql` | 17 security checks; runs in a transaction and leaves no data. Every row should say PASS. |
 | `src/app/page.tsx` | Landing page |
-| `src/app/[metro]/page.tsx` | All approved curators in a metro (`/nyc`) |
+| `src/app/cities/page.tsx` | Every city, live ones first, the rest marked coming soon |
+| `src/app/[metro]/page.tsx` | All approved curators in a city (`/nyc`), or a "start the first list" invite |
 | `src/app/[metro]/[handle]/page.tsx` | One curator's public list (`/nyc/erjon`), cached and tagged |
 | `src/app/go/[id]/route.ts` | Click-through redirect that records a referral, works signed out |
 | `src/app/login/` | Magic-link sign in |
@@ -34,7 +36,7 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 ## Run it locally
 
 1. Create a free project at supabase.com.
-2. In the Supabase dashboard open **SQL Editor** and run these files in order, pasting each one in: `supabase/migrations/0001_init.sql`, `supabase/migrations/0002_harden_helpers.sql`, `supabase/seed.sql`.
+2. In the Supabase dashboard open **SQL Editor** and run these files in order, pasting each one in: `supabase/migrations/0001_init.sql`, `supabase/migrations/0002_harden_helpers.sql`, `supabase/seed.sql`, `supabase/migrations/0003_more_cities.sql`.
 3. In **Authentication > URL Configuration** add `http://localhost:3000/auth/callback` to Redirect URLs.
 4. Copy `.env.example` to `.env.local` and fill in the URL and anon key from **Project Settings > API**.
 5. `npm install`, then `npm run dev`, then open http://localhost:3000.
@@ -58,3 +60,7 @@ Then sign out and back in so the new role takes effect. Approving in SQL directl
 - The six-month confirmation email and the 30-day follow-up (phase 3, Python jobs)
 - Google Business status check for closed shops (phase 3)
 - Vendor dashboard and any payment (phase 4)
+
+## Adding a city
+
+Insert one row into `metros` (slug, name, neighborhoods), the way `0003_more_cities.sql` does. The city appears on `/cities` as coming soon and goes live when its first curator is approved.

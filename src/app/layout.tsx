@@ -26,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               ThrottleDex
             </Link>
             <nav className="flex items-center gap-4 text-[13.5px]">
-              <Link href="/nyc" className="text-ink-2 hover:text-ink">NYC</Link>
+              <Link href="/cities" className="text-ink-2 hover:text-ink">Cities</Link>
               <Link href="/dashboard" className="text-ink-2 hover:text-ink">Your list</Link>
             </nav>
           </div>

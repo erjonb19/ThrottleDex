@@ -86,7 +86,7 @@ function ProfileForm({ curator, metros }: { curator: { handle: string; display_n
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="label">Display name<input id="display_name" name="display_name" required maxLength={60} defaultValue={curator?.display_name ?? ""} className="field" /></label>
         <label className="label">Handle (your URL)<input id="handle" name="handle" required pattern="[a-z0-9][a-z0-9-]{1,30}" defaultValue={curator?.handle ?? ""} placeholder="first-name" className="field" /></label>
-        <label className="label">Metro
+        <label className="label">City
           <select id="metro" name="metro" defaultValue={curator?.metro ?? "nyc"} className="field">
             {metros.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
           </select>

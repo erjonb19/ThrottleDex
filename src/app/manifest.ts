@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "ThrottleDex",
     short_name: "ThrottleDex",
     description: "The car people real enthusiasts send their friends to, one city at a time.",
-    start_url: "/nyc",
+    start_url: "/cities",
     scope: "/",
     display: "standalone",
     background_color: "#15202b",

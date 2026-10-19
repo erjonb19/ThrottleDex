@@ -48,6 +48,20 @@ export async function getApprovedCurators(metro: string): Promise<Curator[]> {
   return (check(res, "curators") ?? []) as Curator[];
 }
 
+/** Every city with how many approved lists it has. Live cities first, then "coming soon". */
+export async function getCities(): Promise<(Metro & { lists: number })[]> {
+  "use cache";
+  cacheLife("minutes");
+  const { metros } = await getReference();
+  cacheTag(tags.reference, ...metros.map((m) => tags.curators(m.slug)));
+  const res = await supabasePublic.from("curators").select("metro").not("approved_at", "is", null);
+  const counts = new Map<string, number>();
+  for (const r of check(res, "cities") ?? []) counts.set(r.metro, (counts.get(r.metro) ?? 0) + 1);
+  return metros
+    .map((m) => ({ ...m, lists: counts.get(m.slug) ?? 0 }))
+    .sort((a, b) => Number(b.lists > 0) - Number(a.lists > 0) || a.name.localeCompare(b.name));
+}
+
 export async function getCuratorPage(
   metro: string,
   handle: string,
