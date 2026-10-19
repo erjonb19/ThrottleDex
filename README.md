@@ -2,7 +2,7 @@
 
 The car people real enthusiasts send their friends to, one city at a time. A curator publishes a list of vendors by category, vouched for with their own name, re-checked every six months. Nobody pays to be listed.
 
-Name chosen Oct 2026. Domain and trademark checks are the owner's next step.
+Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 2026. Trademark search still to do.
 
 ## What is here
 
