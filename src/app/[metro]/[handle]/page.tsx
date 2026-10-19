@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { Slot } from "@/components/Slot";
+import { TierFilter } from "@/components/TierFilter";
+import type { Tier } from "@/lib/types";
 import { getCuratorPage, getReference } from "@/lib/data";
 
 export async function generateStaticParams() {
@@ -75,8 +77,10 @@ async function Slots({
 }: { groups: string[]; categories: Awaited<ReturnType<typeof getReference>>["categories"]; byCategory: Map<string, Parameters<typeof Slot>[0]["listing"]> }) {
   await connection();
   const now = new Date();
+  const counts: Partial<Record<Tier, number>> = {};
+  for (const l of byCategory.values()) for (const t of l?.vendor.tiers ?? []) counts[t] = (counts[t] ?? 0) + 1;
   return (
-    <>
+    <TierFilter counts={counts}>
       {groups.map((g) => {
         const cats = categories.filter((c) => c.group_name === g);
         const n = cats.filter((c) => byCategory.has(c.slug)).length;
@@ -91,7 +95,7 @@ async function Slots({
           </section>
         );
       })}
-    </>
+    </TierFilter>
   );
 }
 

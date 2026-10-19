@@ -23,7 +23,7 @@ export function Slot({ category, listing, now }: { category: Category; listing?:
   const stale = months > STALE_AFTER_MONTHS;
   const hasLink = Boolean(v.website || v.instagram);
   return (
-    <article className="grid content-start gap-1.5 rounded-lg border border-line bg-paper p-4">
+    <article data-tiers={v.tiers.join(" ")} className="grid content-start gap-1.5 rounded-lg border border-line bg-paper p-4">
       <div className="eyebrow">{category.name}</div>
       <div className="text-[13px] text-ink-2">{category.purpose}</div>
       <div className="mt-1 font-display text-2xl font-semibold leading-tight break-words">{v.name}</div>

@@ -4,11 +4,12 @@ The car people real enthusiasts send their friends to, one city at a time. A cur
 
 Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 2026. USPTO search Oct 18, 2026: no marks for "throttledex".
 
-## Status (Oct 18, 2026)
+## Status (Oct 19, 2026)
 
 - Supabase project `throttledex` (us-east-1) is live with both migrations and the seed applied. Supabase's security advisor reports no issues.
-- Tested end to end: 22 browser checks (magic-link sign in, profile, saving and editing picks, approval, public page, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
-- Not yet deployed. Next step is Vercel.
+- New: admin approval page (`/admin`), tier filters on each public list, and "Add to Home Screen" install on iPhone and Android.
+- Tested end to end: 36 browser checks (magic-link sign in, profile, saving and editing picks, admin approve and remove, public page, tier filters, home-screen manifest and icons, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
+- Not yet deployed. Vercel is on hold; see Deploy.
 
 ## What is here
 
@@ -24,8 +25,11 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 | `src/app/go/[id]/route.ts` | Click-through redirect that records a referral, works signed out |
 | `src/app/login/` | Magic-link sign in |
 | `src/app/dashboard/` | Curator profile and one form per category slot |
+| `src/app/admin/` | Admin page: approve or remove curators; pages update right away |
+| `src/components/TierFilter.tsx` | The Commuter / Enthusiast / Luxury / Collector / Working filter on a public list |
+| `src/app/manifest.ts` | Makes the site installable to a phone's home screen |
 | `src/lib/data.ts` | Cached public reads with cache tags |
-| `src/proxy.ts` | Refreshes the session on `/dashboard` only |
+| `src/proxy.ts` | Refreshes the session on `/dashboard` and `/admin`; sends signed-out visitors to sign in |
 
 ## Run it locally
 
@@ -35,9 +39,7 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 4. Copy `.env.example` to `.env.local` and fill in the URL and anon key from **Project Settings > API**.
 5. `npm install`, then `npm run dev`, then open http://localhost:3000.
 6. Go to **Your list**, sign in with your email, save a profile, fill in a few slots.
-7. To make your list public, run this in the SQL Editor (replace the handle):
-   `update curators set approved_at = now() where handle = 'your-handle';`
-   The page appears within about 30 seconds, and on the `/nyc` index within a couple of minutes.
+7. Make yourself an admin (see Admin below), then open `/admin` and press **Approve** next to your handle. Your page and the `/nyc` index update right away.
 
 ## Deploy
 
@@ -47,12 +49,12 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 
 ## Admin
 
-Approval is manual on purpose. To make a user an admin (can approve curators, change vendor status), set `app_metadata.role = 'admin'` on their auth user in Supabase **Authentication > Users**, or:
+Approval is manual on purpose, and happens at `/admin`. To make a user an admin, sign in once with their email, then set `app_metadata.role = 'admin'` on their auth user in Supabase **Authentication > Users**, or:
 `update auth.users set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}' where email = 'you@example.com';`
+Then sign out and back in so the new role takes effect. Approving in SQL directly (`update curators set approved_at = now() ...`) still works, but the `/nyc` index can take a couple of minutes to show it.
 
 ## Not built yet (see the build plan)
 
 - The six-month confirmation email and the 30-day follow-up (phase 3, Python jobs)
 - Google Business status check for closed shops (phase 3)
-- Tier filters on the public page (the data is already tagged; phase 4)
 - Vendor dashboard and any payment (phase 4)

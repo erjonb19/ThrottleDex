@@ -64,6 +64,19 @@ body {
 h1, h2, h3 { text-wrap: balance; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* Tier filter (components/TierFilter.tsx): with a tier chosen, show only picks tagged
+   for it, drop empty slots, and hide groups left with nothing in them. */
+[data-filter="commuter"] article:not([data-tiers~="commuter"]),
+[data-filter="enthusiast"] article:not([data-tiers~="enthusiast"]),
+[data-filter="luxury"] article:not([data-tiers~="luxury"]),
+[data-filter="collector"] article:not([data-tiers~="collector"]),
+[data-filter="working"] article:not([data-tiers~="working"]),
+[data-filter="commuter"] section:not(:has(article[data-tiers~="commuter"])),
+[data-filter="enthusiast"] section:not(:has(article[data-tiers~="enthusiast"])),
+[data-filter="luxury"] section:not(:has(article[data-tiers~="luxury"])),
+[data-filter="collector"] section:not(:has(article[data-tiers~="collector"])),
+[data-filter="working"] section:not(:has(article[data-tiers~="working"])) { display: none; }
+
 .eyebrow { @apply font-mono text-[11.5px] uppercase tracking-[.07em] text-ink-3; }
 .btn { @apply inline-flex items-center gap-2 rounded-md border border-line bg-paper px-3.5 py-1.5 font-medium text-ink hover:border-ink-3 disabled:opacity-55; }
 .btn-primary { @apply border-accent bg-accent text-accent-ink hover:border-accent hover:opacity-90; }

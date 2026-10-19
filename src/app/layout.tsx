@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -10,7 +10,11 @@ const mono = IBM_Plex_Mono({ variable: "--font-mono", subsets: ["latin"], weight
 export const metadata: Metadata = {
   title: { default: "ThrottleDex", template: "%s · ThrottleDex" },
   description: "The car people real enthusiasts send their friends to, one city at a time.",
+  // iPhone "Add to Home Screen": open full screen with the app's name under the icon.
+  appleWebApp: { capable: true, title: "ThrottleDex", statusBarStyle: "black-translucent" },
 };
+
+export const viewport: Viewport = { themeColor: "#15202b" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
