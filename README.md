@@ -9,6 +9,7 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 - Supabase project `throttledex` (us-east-1) is live with both migrations and the seed applied. Supabase's security advisor reports no issues.
 - New: admin approval page (`/admin`), tier filters on each public list, "Add to Home Screen" install on iPhone and Android, and seven cities (NYC, LA, Miami, Atlanta, Dallas–Fort Worth, Chicago, Detroit). A city shows "coming soon" until its first curator is approved.
 - Tested end to end: 41 browser checks (magic-link sign in, profile, saving and editing picks, admin approve and remove, public page, cities and coming soon, tier filters, home-screen manifest and icons, click tracking, sign out) and 17 row-level security checks, all passing. The browser checks ran against a local copy of the schema, since the build machine could not reach supabase.co.
+- Phone app (`mobile/`, Expo SDK 58): cities, lists, tier filter, tap-through with click counting. 21 phone-size browser checks passing; iPhone and Android bundles build.
 - Not yet deployed. Vercel is on hold; see Deploy.
 
 ## What is here
@@ -32,6 +33,10 @@ Name chosen Oct 2026. Domain throttledex.com registered at Porkbun on Oct 18, 20
 | `src/app/manifest.ts` | Makes the site installable to a phone's home screen |
 | `src/lib/data.ts` | Cached public reads with cache tags |
 | `src/proxy.ts` | Refreshes the session on `/dashboard` and `/admin`; sends signed-out visitors to sign in |
+
+## Phone app
+
+`mobile/` is the iPhone and Android app (Expo). It shows the same cities and lists and counts taps the same way. See `mobile/README.md` to open it on your phone.
 
 ## Run it locally
 
